@@ -1,0 +1,52 @@
+// Google fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+// CSS Vars
+@import url('../../assets/styles/vars.scss');
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.55;
+  font-size: 14px;
+  font-weight: 400;
+  background: var(--background);
+  color: var(--text-color);
+}
+
+.container {
+  max-width: calc(938px + 30px);
+  margin: 0 auto;
+  padding: 0 15px;
+  height: 100%;
+}
+
+button {
+  outline: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.main {
+  &__articles {
+    padding-top: 26px;
+    padding-bottom: 20px;
+  }
+}
+
+.text-align-center {
+  text-align: center;
+  margin: 0 auto;
+}
+

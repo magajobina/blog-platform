@@ -1,0 +1,30 @@
+.articles {
+  &__pagination {
+    .ant-pagination-item {
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--text-color);
+      margin-inline-end: 5px;
+      transition: background 0.15s;
+
+      &:hover a {
+        color: var(--primary-color);
+      }
+
+      &.ant-pagination-item-active {
+        border-color: var(--primary-color);
+        background: var(--primary-color);
+
+        &:hover a {
+          color: #fff;
+        }
+
+        a {
+          color: #fff;
+          transition: color 0.1s;
+        }
+      }
+    }
+  }
+}

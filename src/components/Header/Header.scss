@@ -1,0 +1,37 @@
+.header {
+  padding: 15px 0;
+  background: var(--background-color-base);
+
+  .container {
+    max-width: 1300px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__sitetitle {
+    margin-right: auto;
+    font-size: 18px;
+    text-decoration: none;
+    color: inherit;
+
+    &:visited {
+      text-decoration: none;
+    }
+    &:active {
+      outline: none;
+    }
+  }
+
+  &__sign-in {
+    font-size: 18px;
+    color: var(--heading-color);
+    margin-right: 30px;
+  }
+  &__sign-up {
+    font-size: 18px;
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+    border-radius: 5px;
+    padding: 8px 18px;
+  }
+}
