@@ -7,12 +7,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { format } from 'date-fns'
 import { Link } from 'react-router-dom/cjs/react-router-dom.min'
+import Markdown from 'markdown-to-jsx'
 import './Article.scss'
 import avatar from '../../assets/img/avatar.png'
 
-const shortenString = (title = '', StrLength = 45) => {
-  if (title.length < StrLength) return title
-  let result = title.substring(0, StrLength)
+const shortenString = (strArg = '', strLength = 45) => {
+  console.log(strArg)
+  if (strArg.length < strLength) return strArg
+  let result = strArg.substring(0, strLength)
   result = result.substring(0, result.lastIndexOf(' '))
 
   return `${result}...`
@@ -24,13 +26,13 @@ export default function Article({
   author,
   body,
   createdAt,
+  description,
   favorited,
   favCount,
   slug,
-  tagList = [],
+  tagList,
   title,
   updatedAt,
-  markdownContent = null,
 }) {
   return (
     <article className="article">
@@ -38,7 +40,7 @@ export default function Article({
         <div className="article__left">
           <div className="article__title-like">
             <Link className="article__title" to={`/articles/${slug}`}>
-              {shortenString(title, 45)}
+              {shortenString(title, 50)}
             </Link>
             <button className="button article__like-btn" type="button">
               {favCount}
@@ -63,8 +65,12 @@ export default function Article({
         </div>
       </div>
       <div className="article__bottom">
-        <div className="article__excerpt">{body}</div>
-        {markdownContent && <div className="article__markdown">{markdownContent}</div>}
+        <div className="article__excerpt">{description}</div>
+        {body && (
+          <div className="article__markdown">
+            <Markdown className="article__markdown">{body}</Markdown>
+          </div>
+        )}
       </div>
     </article>
   )

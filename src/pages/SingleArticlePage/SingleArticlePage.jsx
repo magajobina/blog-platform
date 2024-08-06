@@ -6,32 +6,33 @@ import { useParams } from 'react-router-dom/cjs/react-router-dom.min'
 import './SingleArticlePage.scss'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import Article from '../../components/Article'
 import { fetchSingleArticle } from '../../slices/mainSlice'
-import Spinner from '../../components/Spinner/Spinner'
+import Article from '../../components/Article'
+import Spinner from '../../components/Spinner'
+import ErrorAlert from '../../components/ErrorAlert'
 
 export default function SingleArticlePage() {
   const { slug } = useParams()
   const dispatch = useDispatch()
-  const article = useSelector((state) => state.main.singlePage)
-  const status = useSelector((state) => state.main.status) === 'resolved'
+  const article = useSelector((state) => state.main.singlePage.fetchedSingle)
+  const status = useSelector((state) => state.main.singlePage.status) === 'resolved'
+  const error = useSelector((state) => state.main.singlePage.status) === 'rejected'
 
   useEffect(() => {
     dispatch(fetchSingleArticle(slug))
   }, [])
 
-  // if (slug) console.log('paramsSlug:', slug)
-
-  console.log(status)
   return (
     <section className="main__articles articles">
       <div className="container">
-        {!status && <Spinner />}
+        {!status && !error && <Spinner />}
+        {error && <ErrorAlert description="Ошибка загрузке этой статьи" />}
         {status && (
           <Article
             author={article.author}
             body={article.body}
             createdAt={article.createdAt}
+            description={article.description}
             favorited={article.favorited}
             favCount={article.favoritesCount}
             slug={article.slug}

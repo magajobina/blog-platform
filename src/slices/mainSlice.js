@@ -8,35 +8,58 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 const initialState = {
   articlesPage: {
-    articles: [],
-    articlesCount: null,
+    fetchedArticles: {
+      articles: [],
+      articlesCount: null,
+    },
+    articlesPageNumber: 1,
+    status: null,
+    error: null,
   },
-  articlesPageNumber: 1,
-  singlePage: {},
+  singlePage: {
+    fetchedSingle: {},
+    status: null,
+    error: null,
+  },
   status: null,
   error: null,
 }
 
 // Создаем thunk для получения статей
-export const fetchArticles = createAsyncThunk('main/fetchArticles', async (pageNumber = 1, { dispatch }) => {
-  const baseUrl = 'https://blog.kata.academy/api'
-  const articlesUrl = '/articles'
-  const queryLimit = '?limit=5'
-  const skipNumber = (pageNumber - 1) * 5
-  const querySkip = `&offset=${skipNumber}`
+export const fetchArticles = createAsyncThunk('main/fetchArticles', async (pageNumber, { rejectWithValue }) => {
+  try {
+    const baseUrl = 'https://blog.kata.academy/api'
+    const articlesUrl = '/articles'
+    const queryLimit = '?limit=5'
+    const skipNumber = (pageNumber - 1) * 5
+    const querySkip = `&offset=${skipNumber}`
 
-  const response = await fetch(`${baseUrl}${articlesUrl}${queryLimit}${querySkip}`)
-  const articles = await response.json()
+    const response = await fetch(`${baseUrl}${articlesUrl}${queryLimit}${querySkip}`)
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+    const articles = await response.json()
 
-  return { articles, pageNumber }
+    return { articles, pageNumber }
+  } catch (error) {
+    return rejectWithValue(error.message)
+  }
 })
-export const fetchSingleArticle = createAsyncThunk('main/fetchSingleArticle', async (slug, { dispatch }) => {
-  const baseUrl = 'https://blog.kata.academy/api/articles/'
 
-  const response = await fetch(`${baseUrl}${slug}`)
-  const result = await response.json()
+export const fetchSingleArticle = createAsyncThunk('main/fetchSingleArticle', async (slug, { rejectWithValue }) => {
+  try {
+    const baseUrl = 'https://blog.kata.academy/api/articles/'
 
-  return result
+    const response = await fetch(`${baseUrl}${slug}`)
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+    const result = await response.json()
+
+    return result
+  } catch (error) {
+    return rejectWithValue(error.message)
+  }
 })
 
 const mainSlice = createSlice({
@@ -53,34 +76,34 @@ const mainSlice = createSlice({
     builder
       // all articles
       .addCase(fetchArticles.pending, (state) => {
-        state.status = 'loading'
-        state.error = null
+        state.articlesPage.status = 'loading'
+        state.articlesPage.error = null
       })
       .addCase(fetchArticles.fulfilled, (state, action) => {
         const { payload } = action
 
-        state.articlesPage = payload.articles
-        state.articlesPageNumber = payload.pageNumber
-        state.status = 'resolved'
+        state.articlesPage.fetchedArticles = payload.articles
+        if (payload.pageNumber) state.articlesPage.articlesPageNumber = payload.pageNumber
+        state.articlesPage.status = 'resolved'
       })
       .addCase(fetchArticles.rejected, (state, action) => {
-        state.status = 'rejected'
-        state.error = action.error.message
+        state.articlesPage.status = 'rejected'
+        state.articlesPage.error = action.error.message
       })
       // single article
       .addCase(fetchSingleArticle.pending, (state) => {
-        state.status = 'loading'
-        state.error = null
+        state.singlePage.status = 'loading'
+        state.singlePage.error = null
       })
       .addCase(fetchSingleArticle.fulfilled, (state, action) => {
         const { payload } = action
 
-        state.singlePage = payload.article
-        state.status = 'resolved'
+        state.singlePage.fetchedSingle = payload.article
+        state.singlePage.status = 'resolved'
       })
       .addCase(fetchSingleArticle.rejected, (state, action) => {
-        state.status = 'rejected'
-        state.error = action.error.message
+        state.singlePage.status = 'rejected'
+        state.singlePage.error = action.error.message
       })
   },
 })
