@@ -12,6 +12,7 @@ import Spinner from '../../components/Spinner'
 import ErrorAlert from '../../components/ErrorAlert'
 
 export default function SingleArticlePage() {
+
   const { slug } = useParams()
   const dispatch = useDispatch()
   const article = useSelector((state) => state.main.singlePage.fetchedSingle)

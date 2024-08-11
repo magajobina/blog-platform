@@ -62,6 +62,7 @@ export const fetchSingleArticle = createAsyncThunk('main/fetchSingleArticle', as
   }
 })
 
+
 const mainSlice = createSlice({
   name: 'main',
   initialState,
@@ -105,6 +106,18 @@ const mainSlice = createSlice({
         state.singlePage.status = 'rejected'
         state.singlePage.error = action.error.message
       })
+      // register user
+      // .addCase(fetchSingleArticle.pending, (state) => {
+      //   state.singlePage.status = 'loading'
+      //   state.singlePage.error = null
+      // })
+      // .addCase(registerUser.fulfilled, (state, action) => {
+      //   // console.log(action);
+      // })
+    // .addCase(fetchSingleArticle.rejected, (state, action) => {
+    //   state.singlePage.status = 'rejected'
+    //   state.singlePage.error = action.error.message
+    // })
   },
 })
 

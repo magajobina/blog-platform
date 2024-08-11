@@ -26,6 +26,11 @@
     font-size: 18px;
     color: var(--heading-color);
     margin-right: 30px;
+
+    a {
+      color: inherit;
+      text-decoration: inherit;
+    }
   }
   &__sign-up {
     font-size: 18px;
@@ -33,5 +38,10 @@
     border: 1px solid var(--success-color);
     border-radius: 5px;
     padding: 8px 18px;
+
+    a {
+      color: inherit;
+      text-decoration: inherit;
+    }
   }
 }

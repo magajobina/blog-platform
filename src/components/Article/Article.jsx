@@ -12,7 +12,6 @@ import './Article.scss'
 import avatar from '../../assets/img/avatar.png'
 
 const shortenString = (strArg = '', strLength = 45) => {
-  console.log(strArg)
   if (strArg.length < strLength) return strArg
   let result = strArg.substring(0, strLength)
   result = result.substring(0, result.lastIndexOf(' '))
@@ -56,7 +55,7 @@ export default function Article({
         </div>
         <div className="article__person">
           <div className="article__namedate">
-            <div className="article__name">{author.username}</div>
+            <div className="article__name">{shortenString(author.username, 20)}</div>
             <div className="article__date">{handleDate(createdAt)}</div>
           </div>
           <div className="article__avatar">
@@ -65,7 +64,7 @@ export default function Article({
         </div>
       </div>
       <div className="article__bottom">
-        <div className="article__excerpt">{description}</div>
+        <div className="article__excerpt">{shortenString(description, 500)}</div>
         {body && (
           <div className="article__markdown">
             <Markdown className="article__markdown">{body}</Markdown>

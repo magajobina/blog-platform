@@ -9,10 +9,10 @@ export default function Header() {
           Realworld Blog
         </Link>
         <button className="button header__sign-in" type="button">
-          Sign In
+          <Link to="/login">Sign In</Link>
         </button>
         <button className="button header__sign-up" type="button">
-          Sign Up
+          <Link to="/register">Sign Up</Link>
         </button>
       </div>
     </header>
