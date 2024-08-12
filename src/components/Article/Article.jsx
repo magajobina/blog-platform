@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable prefer-const */
 /* eslint-disable react/destructuring-assignment */
@@ -21,6 +22,16 @@ const shortenString = (strArg = '', strLength = 45) => {
 
 const handleDate = (date = new Date()) => format(new Date(date), 'MMMM d, yyyy')
 
+const isValidUrl = (string) => {
+  try {
+    // eslint-disable-next-line no-new
+    new URL(string)
+    return true
+  } catch (_) {
+    return false
+  }
+}
+
 export default function Article({
   author,
   body,
@@ -33,6 +44,8 @@ export default function Article({
   title,
   updatedAt,
 }) {
+  const imageUrl = isValidUrl(author.image) ? author.image : avatar
+
   return (
     <article className="article">
       <div className="article__top">
@@ -59,7 +72,7 @@ export default function Article({
             <div className="article__date">{handleDate(createdAt)}</div>
           </div>
           <div className="article__avatar">
-            <img src={author.image ? author.image : avatar} alt="user avatar" />
+            <img src={imageUrl} alt="user avatar" />
           </div>
         </div>
       </div>

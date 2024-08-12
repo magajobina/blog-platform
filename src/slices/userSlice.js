@@ -7,10 +7,31 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
+const saveUserToLocal = (user) => {
+  try {
+    const serializedState = JSON.stringify(user)
+    localStorage.setItem('user', serializedState)
+    console.log('Сохранено в localStorage');
+  } catch {
+    console.error('Ошибка сохранения в localStorage');
+  }
+}
+
+const loadUserFromLocal = () => {
+  try {
+    const serializedState = localStorage.getItem('user')
+    if (serializedState === null) {
+      return {}
+    }
+    return JSON.parse(serializedState)
+  } catch (err) {
+    return {}
+  }
+}
+
 const initialState = {
-  userData: {},
+  userData: loadUserFromLocal(),
   errorCode: null,
-  errorMessage: null,
 }
 
 export const registerUser = createAsyncThunk('user/registerUser', async (formData, { rejectWithValue }) => {
@@ -27,7 +48,7 @@ export const registerUser = createAsyncThunk('user/registerUser', async (formDat
       body: JSON.stringify({
         user: {
           username: formData.username,
-          email: formData.email,
+          email: formData.email.toLowerCase(),
           password: formData.password,
         },
       }),
@@ -36,7 +57,7 @@ export const registerUser = createAsyncThunk('user/registerUser', async (formDat
     const response = await fetch(url, params)
 
     if (!response.ok) {
-      throw new Error('Network response was not ok')
+      return rejectWithValue(response.status)
     }
 
     const result = await response.json()
@@ -60,10 +81,73 @@ export const loginUser = createAsyncThunk('user/loginUser', async (formData, { r
       },
       body: JSON.stringify({
         user: {
-          email: formData.email,
+          email: formData.email.toLowerCase(),
           password: formData.password,
         },
       }),
+    }
+
+    const response = await fetch(url, params)
+
+    if (!response.ok) {
+      return rejectWithValue(response.status)
+    }
+
+    const result = await response.json()
+
+    return result
+  } catch (error) {
+    console.log(error)
+  }
+})
+
+export const updateUser = createAsyncThunk('user/updateUser', async (formData, { rejectWithValue, getState }) => {
+  try {
+    const url = 'https://blog.kata.academy/api/user'
+    const { token } = getState().user.userData
+
+    console.log(formData)
+
+    const params = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`, // Добавляем JWT токен в заголовок авторизации
+      },
+      body: JSON.stringify({
+        user: {
+          username: formData.username,
+          email: formData.email.toLowerCase(),
+          ...(formData.password && { password: formData.password }),
+          image: formData.image || null,
+        },
+      }),
+    }
+
+    const response = await fetch(url, params)
+
+    if (!response.ok) {
+      return rejectWithValue(response.status)
+    }
+
+    const result = await response.json()
+
+    return result
+  } catch (error) {
+    console.log(error)
+  }
+})
+
+export const getCurrentUser = createAsyncThunk('user/getCurrentUser', async (_, { rejectWithValue, getState }) => {
+  try {
+    const url = 'https://blog.kata.academy/api/user'
+    const { token } = getState().user.userData
+
+    const params = {
+      method: 'GET',
+      headers: {
+        Authorization: `Token ${token}`,
+      },
     }
 
     const response = await fetch(url, params)
@@ -84,8 +168,9 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action) => action.payload,
-    clearUser: () => null,
+    clearError: (state) => {
+      state.errorCode = null
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -94,6 +179,13 @@ const userSlice = createSlice({
         console.log('РЕГИСТРАЦИЯ - ', action.payload)
         if (action.payload) {
           state.userData = action.payload.user
+          saveUserToLocal(action.payload.user)
+        }
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        console.log('РЕГИСТРАЦИЯ НЕ УДАЛАСЬ - ', action.payload)
+        if (action.payload) {
+          state.errorCode = action.payload
         }
       })
 
@@ -102,18 +194,48 @@ const userSlice = createSlice({
         console.log('ВХОД - ', action.payload)
         if (action.payload) {
           state.userData = action.payload.user
+          saveUserToLocal(action.payload.user)
         }
       })
       .addCase(loginUser.rejected, (state, action) => {
         console.log('ВХОД НЕ УДАЛСЯ - ', action.payload)
         if (action.payload) {
           state.errorCode = action.payload
-          state.errorMessage = 'Input data incorrect'
+        }
+      })
+
+      // Get current user
+      .addCase(getCurrentUser.fulfilled, (state, action) => {
+        console.log('getCurrentUser - ', action.payload)
+        if (action.payload) {
+          state.userData = action.payload.user
+          saveUserToLocal(action.payload.user)
+        }
+      })
+      .addCase(getCurrentUser.rejected, (state, action) => {
+        console.log('getCurrentUser не удался - ', action.payload)
+        if (action.payload) {
+          state.errorCode = action.payload
+        }
+      })
+
+      // Update user
+      .addCase(updateUser.fulfilled, (state, action) => {
+        console.log('updateUser - ', action.payload)
+        if (action.payload) {
+          state.userData = action.payload.user
+          saveUserToLocal(action.payload.user)
+        }
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        console.log('updateUser не удался - ', action.payload)
+        if (action.payload) {
+          state.errorCode = action.payload
         }
       })
   },
 })
 
-// export const { setUser, clearUser } = userSlice.actions
+export const { clearError } = userSlice.actions
 
 export default userSlice.reducer

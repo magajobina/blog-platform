@@ -7,6 +7,7 @@ import ArticlesListPage from '../../pages/ArticlesListPage'
 import SingleArticlePage from '../../pages/SingleArticlePage'
 import SignUpPage from '../../pages/SignUpPage'
 import LoginPage from '../../pages/LoginPage'
+import ProfilePage from '../../pages/ProfilePage'
 import './App.scss'
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
             <Route path="/articles/:slug" component={SingleArticlePage} />
             <Route path="/register" component={SignUpPage} />
             <Route path="/login" component={LoginPage} />
+            <Route path="/profile" component={ProfilePage} />
           </Switch>
         </main>
       </div>

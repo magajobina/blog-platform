@@ -1,14 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/self-closing-comp */
-import './SignUpPage.scss'
+import './ProfilePage.scss'
 import { Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRef, useEffect } from 'react'
 import classNames from 'classnames'
 import { ToastContainer, toast } from 'react-toastify'
-import { registerUser, clearError } from '../../slices/userSlice'
+import { registerUser, clearError, updateUser, getCurrentUser } from '../../slices/userSlice'
 
 const toastErrorParams = {
   position: 'top-right',
@@ -25,39 +25,50 @@ export default function SignUpPage() {
   const { push } = useHistory()
   const dispatch = useDispatch()
   const errorCode = useSelector((state) => state.user.errorCode)
+  const userData = useSelector((state) => state.user.userData)
+
   const {
     register,
     setError,
     handleSubmit,
     formState: { errors },
-    watch,
-  } = useForm()
+    reset,
+  } = useForm({
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      image: '',
+    },
+  })
 
   useEffect(() => {
-    if (errorCode) dispatch(clearError())
+    dispatch(getCurrentUser())
   }, [])
 
   useEffect(() => {
     if (!errorCode) return
 
-    if (errorCode === 422) {
-      toast.error(
-        `The information you entered is incorrect or is already registered, error code ${errorCode}`,
-        toastErrorParams
-      )
+    if (errorCode === 401) {
+      push('/login')
+    } else {
+      toast.error(`You have probably entered existing profile information, code ${errorCode}, `, toastErrorParams)
       setError('username', { type: 'focus' }, { shouldFocus: true })
       setError('email')
-      setError('password')
-      setError('passwordRepeat')
-    } else {
-      toast.error(`Unknown server error, code ${errorCode}`, toastErrorParams)
+      dispatch(clearError())
     }
-
-    dispatch(clearError())
   }, [errorCode])
 
-  const password = useRef({})
-  password.current = watch('password', '')
+  useEffect(() => {
+    if (userData) {
+      reset({
+        username: userData.username || '',
+        email: userData.email || '',
+        password: '',
+        image: userData.image || '',
+      })
+    }
+  }, [userData])
 
   const paramsObj = {
     name: {
@@ -79,7 +90,7 @@ export default function SignUpPage() {
       },
     },
     password: {
-      required: 'This is required',
+      required: false,
       minLength: {
         value: 6,
         message: 'Min length is 6',
@@ -89,11 +100,13 @@ export default function SignUpPage() {
         message: 'Max length is 40',
       },
     },
-    passwordRepeat: {
-      validate: (value) => value === password.current || 'The passwords do not match',
-    },
-    checkbox: {
-      required: 'Check the box to continue',
+    image: {
+      required: false,
+      pattern: {
+        value:
+          /^(https?:\/\/)?((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(#[\w\d-]*)?$/i,
+        message: 'Entered value does not match URL format',
+      },
     },
   }
 
@@ -102,15 +115,15 @@ export default function SignUpPage() {
       <ToastContainer />
       <div className="container">
         <div className="signup__inner">
-          <h2 className="signup__title">Create new account</h2>
+          <h2 className="signup__title">Edit Profile</h2>
           <form
             className="signup__form"
             onSubmit={handleSubmit(async (formData) => {
-              const resultAction = await dispatch(registerUser(formData))
+              const resultAction = await dispatch(updateUser(formData))
 
-              if (registerUser.fulfilled.match(resultAction)) {
-                toast(`🦄 You have been successfully registered!`)
-                push('/')
+              if (updateUser.fulfilled.match(resultAction)) {
+                toast(`🦄 Your profile has been successfully updated!`)
+                // push('/')
               }
             })}
             noValidate
@@ -144,7 +157,7 @@ export default function SignUpPage() {
               className={classNames('signup__label', errors.password && 'signup__label--invalid')}
               htmlFor="password"
             >
-              Password
+              New password
               <input
                 className="signup__input"
                 type="password"
@@ -155,38 +168,21 @@ export default function SignUpPage() {
               />
               <span className="signup__invalid-message">{errors.password?.message}</span>
             </label>
-            <label
-              className={classNames('signup__label', errors.passwordRepeat && 'signup__label--invalid')}
-              htmlFor="passwordRepeat"
-            >
-              Repeat Password
+            <label className={classNames('signup__label', errors.image && 'signup__label--invalid')} htmlFor="image">
+              Avatar image (url)
               <input
                 className="signup__input"
-                type="password"
-                id="passwordRepeat"
-                name="passwordRepeat"
-                {...register('passwordRepeat', paramsObj.passwordRepeat)}
-                placeholder="Password"
+                type="url"
+                id="image"
+                name="image"
+                {...register('image', paramsObj.image)}
+                placeholder="Avatar image"
               />
-              <span className="signup__invalid-message">{errors.passwordRepeat?.message}</span>
-            </label>
-            <hr />
-            <label className={classNames('signup__agree', errors.agree && 'signup__label--invalid')} htmlFor="agree">
-              <input
-                className="signup__agree-input"
-                type="checkbox"
-                id="agree"
-                {...register('agree', paramsObj.checkbox)}
-              />
-              I agree to the processing of my personal information
-              <span className="signup__invalid-message">{errors.agree?.message}</span>
+              <span className="signup__invalid-message">{errors.image?.message}</span>
             </label>
             <button className="signup__submit button" type="submit">
-              Create
+              Save
             </button>
-            <div className="signup__signin">
-              Already have an account? <Link to="/login">Sign In.</Link>
-            </div>
           </form>
         </div>
       </div>
