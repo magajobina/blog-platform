@@ -7,16 +7,6 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-const saveUserToLocal = (user) => {
-  try {
-    const serializedState = JSON.stringify(user)
-    localStorage.setItem('user', serializedState)
-    console.log('Сохранено в localStorage');
-  } catch {
-    console.error('Ошибка сохранения в localStorage');
-  }
-}
-
 const loadUserFromLocal = () => {
   try {
     const serializedState = localStorage.getItem('user')
@@ -37,8 +27,6 @@ const initialState = {
 export const registerUser = createAsyncThunk('user/registerUser', async (formData, { rejectWithValue }) => {
   try {
     const url = 'https://blog.kata.academy/api/users'
-
-    console.log(formData)
 
     const params = {
       method: 'POST',
@@ -72,8 +60,6 @@ export const loginUser = createAsyncThunk('user/loginUser', async (formData, { r
   try {
     const url = 'https://blog.kata.academy/api/users/login'
 
-    console.log(formData)
-
     const params = {
       method: 'POST',
       headers: {
@@ -105,8 +91,6 @@ export const updateUser = createAsyncThunk('user/updateUser', async (formData, {
   try {
     const url = 'https://blog.kata.academy/api/user'
     const { token } = getState().user.userData
-
-    console.log(formData)
 
     const params = {
       method: 'PUT',
@@ -171,6 +155,9 @@ const userSlice = createSlice({
     clearError: (state) => {
       state.errorCode = null
     },
+    deleteUser: (state) => {
+      state.userData = {}
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -179,7 +166,6 @@ const userSlice = createSlice({
         console.log('РЕГИСТРАЦИЯ - ', action.payload)
         if (action.payload) {
           state.userData = action.payload.user
-          saveUserToLocal(action.payload.user)
         }
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -194,7 +180,6 @@ const userSlice = createSlice({
         console.log('ВХОД - ', action.payload)
         if (action.payload) {
           state.userData = action.payload.user
-          saveUserToLocal(action.payload.user)
         }
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -209,7 +194,6 @@ const userSlice = createSlice({
         console.log('getCurrentUser - ', action.payload)
         if (action.payload) {
           state.userData = action.payload.user
-          saveUserToLocal(action.payload.user)
         }
       })
       .addCase(getCurrentUser.rejected, (state, action) => {
@@ -224,7 +208,6 @@ const userSlice = createSlice({
         console.log('updateUser - ', action.payload)
         if (action.payload) {
           state.userData = action.payload.user
-          saveUserToLocal(action.payload.user)
         }
       })
       .addCase(updateUser.rejected, (state, action) => {
@@ -236,6 +219,6 @@ const userSlice = createSlice({
   },
 })
 
-export const { clearError } = userSlice.actions
+export const { clearError, deleteUser } = userSlice.actions
 
 export default userSlice.reducer
