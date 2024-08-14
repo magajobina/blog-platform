@@ -12,38 +12,52 @@ const initialState = {
   errorCode: null,
 }
 
-export const addArticle = createAsyncThunk('article/addArticle', async (formData, { rejectWithValue }) => {
-  console.log('Фейковое добавление статьи')
+export const addArticle = createAsyncThunk('article/addArticle', async (formData, { rejectWithValue, getState }) => {
+  // console.log('Фейковое добавление статьи', formData)
+  const { token } = getState().user.userData.token
 
-  // try {
-  //   const url = 'https://blog.kata.academy/api/users'
+  console.log({
+    article: {
+      title: formData.title,
+      description: formData.descr,
+      body: formData.articleText,
+      tagList: formData.tags,
+    },
+  })
 
-  //   const params = {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({
-  //       user: {
-  //         username: formData.username,
-  //         email: formData.email.toLowerCase(),
-  //         password: formData.password,
-  //       },
-  //     }),
-  //   }
+  try {
+    const url = 'https://blog.kata.academy/api/articles/'
 
-  //   const response = await fetch(url, params)
+    const params = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify({
+        article: {
+          title: formData.title,
+          description: formData.descr,
+          body: formData.articleText,
+          tagList: formData.tags,
+        },
+      }),
+    }
 
-  //   if (!response.ok) {
-  //     return rejectWithValue(response.status)
-  //   }
+    const response = await fetch(url, params)
 
-  //   const result = await response.json()
+    // if (!response.ok) {
+    //   return rejectWithValue(response.status)
+    // }
 
-  //   return result
-  // } catch (error) {
-  //   console.log(error)
-  // }
+    const result = await response.json()
+
+    console.log(result)
+
+    return result
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 const articleSlice = createSlice({
@@ -60,7 +74,7 @@ const articleSlice = createSlice({
       .addCase(addArticle.fulfilled, (state, action) => {
         console.log('СТАТЬЯ ДОБАВЛЕНА - ', action.payload)
         if (action.payload) {
-          // state.articleData = action.payload.user
+          state.articleData = action.payload.article
         }
       })
       .addCase(addArticle.rejected, (state, action) => {

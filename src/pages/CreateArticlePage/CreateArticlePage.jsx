@@ -1,3 +1,5 @@
+/* eslint-disable consistent-return */
+/* eslint-disable array-callback-return */
 /* eslint-disable no-use-before-define */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable arrow-body-style */
@@ -124,7 +126,18 @@ export default function CreateArticlePage() {
           <form
             className="create__form"
             onSubmit={handleSubmit(async (formData) => {
-              const resultAction = await dispatch(addArticle({ ...formData, tags: tags.map((tag) => tag.value) }))
+              const dataToAdd = { ...formData, tags: [] }
+
+              dataToAdd.tags = Object.keys(dataToAdd)
+                .filter((key) => key.includes('tag-')) // Отфильтровываем только те ключи, где значение не пустое
+                .map((key) => { 
+                  const tagValue = dataToAdd[key]
+                  delete dataToAdd[key]
+                  return tagValue.trim()
+                })
+                .filter((tag) => tag.length !== 0)
+
+              const resultAction = await dispatch(addArticle(dataToAdd))
 
               if (addArticle.fulfilled.match(resultAction)) {
                 toast(`🦄 Your article has been created!`)

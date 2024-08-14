@@ -96,7 +96,7 @@ export const updateUser = createAsyncThunk('user/updateUser', async (formData, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Token ${token}`, // Добавляем JWT токен в заголовок авторизации
+        Authorization: `Token ${token}`,
       },
       body: JSON.stringify({
         user: {
