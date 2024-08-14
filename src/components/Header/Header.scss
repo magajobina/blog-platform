@@ -68,6 +68,8 @@
     height: 46px;
     position: relative;
     color: var(--heading-color);
+    border-radius: 50%;
+    overflow: hidden;
 
     img {
       position: absolute;

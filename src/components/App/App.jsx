@@ -8,6 +8,7 @@ import SingleArticlePage from '../../pages/SingleArticlePage'
 import SignUpPage from '../../pages/SignUpPage'
 import LoginPage from '../../pages/LoginPage'
 import ProfilePage from '../../pages/ProfilePage'
+import CreateArticlePage from '../../pages/CreateArticlePage'
 import './App.scss'
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="/register" component={SignUpPage} />
             <Route path="/login" component={LoginPage} />
             <Route path="/profile" component={ProfilePage} />
+            <Route path="/new-article" component={CreateArticlePage} />
           </Switch>
         </main>
       </div>

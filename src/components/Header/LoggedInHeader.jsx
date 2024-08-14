@@ -21,7 +21,7 @@ export default function LoggedInHeader() {
   return (
     <>
       <button className="button header__create-art" type="button">
-        <Link to="/temp">Create article</Link>
+        <Link to="/new-article">Create article</Link>
       </button>
       <button className="button header__user-box" type="button">
         <Link to="/profile" className="header__user-info">

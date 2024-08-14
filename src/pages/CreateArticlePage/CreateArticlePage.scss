@@ -1,8 +1,4 @@
-.signup {
-  .container {
-    max-width: calc(384px + 30px);
-  }
-
+.create {
   &__inner {
     box-shadow:
       0 1px 3px 0 rgba(0, 0, 0, 0.02),
@@ -37,20 +33,31 @@
     }
 
     &--invalid {
-      input.signup__input {
+      input.create__input {
         border-color: var(--error-color);
 
         &::placeholder {
-          font-family: 'Roboto', sans-serif;
+          color: var(--error-color);
+        }
+      }
+      textarea.create__input {
+        border-color: var(--error-color);
+
+        &::placeholder {
           color: var(--error-color);
         }
       }
 
-      .signup__invalid-message {
+      .create__invalid-message {
         display: inline;
         color: var(--error-color);
       }
     }
+  }
+
+  &__label-tags {
+    display: grid;
+    gap: 6px;
   }
 
   &__invalid-message {
@@ -58,12 +65,15 @@
   }
 
   &__input {
+    font-family: 'Roboto', sans-serif;
     width: 100%;
     border: 1px solid #d9d9d9;
     border-radius: 4px;
     padding: 8px 12px;
     font-size: 16px;
-    transition: all 0.2s;
+    transition:
+      border-color 0.2s,
+      color 0.2s;
     outline: none;
 
     &:focus {
@@ -76,14 +86,61 @@
     }
 
     &::placeholder {
+      font-family: 'Roboto', sans-serif;
       font-size: 16px;
-
       color: #bfbfbf;
     }
   }
 
-  hr {
-    margin: 21px 0 8px;
+  &__textarea {
+    resize: vertical;
+    height: 168px;
+  }
+
+  &__tag-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .button {
+      font-family: 'Roboto', sans-serif;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-radius: 4px;
+      padding: 8px 26px;
+    }
+
+    &--invalid {
+      input.create__input {
+        border-color: var(--error-color);
+
+        &::placeholder {
+          color: var(--error-color);
+        }
+      }
+
+      .create__invalid-message {
+        display: inline;
+        color: var(--error-color);
+      }
+    }
+  }
+
+  &__tag-input {
+    max-width: 300px;
+  }
+
+  &__tag-delete {
+    border: 1px solid var(--highlight-color);
+    color: var(--highlight-color);
+  }
+
+  &__tag-add {
+    border: 1px solid var(--info-color);
+    color: var(--info-color);
   }
 
   &__submit {
@@ -95,20 +152,9 @@
     text-align: center;
     color: var(--btn-primary-color);
     width: 100%;
+    max-width: 319px;
     border-radius: 4px;
     padding: 8px 16px;
     background: var(--primary-color);
-  }
-
-  &__signin {
-    text-align: center;
-    font-size: 12px;
-    line-height: 1.67;
-    margin-top: 7px;
-    color: var(--text-color-secondary);
-
-    a {
-      color: var(--info-color);
-    }
   }
 }

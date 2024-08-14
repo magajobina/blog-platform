@@ -123,7 +123,6 @@ export default function SignUpPage() {
 
               if (updateUser.fulfilled.match(resultAction)) {
                 toast(`🦄 Your profile has been successfully updated!`)
-                // push('/')
               }
             })}
             noValidate

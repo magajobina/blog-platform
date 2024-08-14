@@ -7,7 +7,6 @@ import LoggedInHeader from './LoggedInHeader'
 
 export default function Header() {
   const isLoggedIn = !!useSelector((state) => state.user.userData.email)
-  console.log(isLoggedIn)
 
   return (
     <header className="header">
