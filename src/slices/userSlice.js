@@ -22,6 +22,7 @@ const loadUserFromLocal = () => {
 const initialState = {
   userData: loadUserFromLocal(),
   errorCode: null,
+  errorMessage: null,
 }
 
 export const registerUser = createAsyncThunk('user/registerUser', async (formData, { rejectWithValue }) => {
@@ -72,7 +73,6 @@ export const loginUser = createAsyncThunk('user/loginUser', async (formData, { r
         },
       }),
     }
-
     const response = await fetch(url, params)
 
     if (!response.ok) {
@@ -157,7 +157,7 @@ const userSlice = createSlice({
     },
     deleteUser: (state) => {
       state.userData = {}
-    }
+    },
   },
   extraReducers: (builder) => {
     builder

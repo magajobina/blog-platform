@@ -34,7 +34,7 @@ const toastErrorParams = {
 export default function CreateArticlePage() {
   const { push } = useHistory()
   const dispatch = useDispatch()
-  const errorCode = useSelector((state) => state.user.errorCode)
+  const { errorCode, errorMessage = 'Problem' } = useSelector((state) => state.article)
 
   const [tags, setTags] = useState([{ id: nanoid(), value: '' }])
 
@@ -83,17 +83,17 @@ export default function CreateArticlePage() {
     if (!errorCode) return
 
     if (errorCode === 422) {
-      toast.error(`The email or password you entered is incorrect, error ${errorCode}`, toastErrorParams)
-      setError('email', { type: 'focus' }, { shouldFocus: true })
-      setError('password')
+      toast.error(`${errorMessage}, error ${errorCode}`, toastErrorParams)
+      // setError('email', { type: 'focus' }, { shouldFocus: true })
+      // setError('password')
     } else if (errorCode === 401) {
-      toast.error(`Unauthorized, please sign in`, toastErrorParams)
+      toast.error(`${errorMessage}, error ${errorCode}`, toastErrorParams)
     } else {
       toast.error(`Unknown server error, code ${errorCode}`, toastErrorParams)
     }
 
     dispatch(clearError())
-  }, [errorCode])
+  }, [errorCode, errorMessage])
 
   const paramsObj = {
     title: {
@@ -130,7 +130,7 @@ export default function CreateArticlePage() {
 
               dataToAdd.tags = Object.keys(dataToAdd)
                 .filter((key) => key.includes('tag-')) // Отфильтровываем только те ключи, где значение не пустое
-                .map((key) => { 
+                .map((key) => {
                   const tagValue = dataToAdd[key]
                   delete dataToAdd[key]
                   return tagValue.trim()

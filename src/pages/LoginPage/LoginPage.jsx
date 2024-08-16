@@ -3,7 +3,7 @@
 /* eslint-disable react/self-closing-comp */
 import 'react-toastify/dist/ReactToastify.css'
 import './LoginPage.scss'
-import { Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min'
+import { Link, useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.min'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useRef } from 'react'
@@ -23,7 +23,10 @@ const toastErrorParams = {
 }
 
 export default function SignUpPage() {
-  const { push } = useHistory()
+  const { push, history } = useHistory() // history для private route
+  const location = useLocation() // для private route
+  const { from } = location.state || { from: { pathname: '/' } } // для private route
+
   const dispatch = useDispatch()
   const errorCode = useSelector((state) => state.user.errorCode)
   const {
@@ -33,7 +36,6 @@ export default function SignUpPage() {
     formState: { errors },
     watch,
   } = useForm()
-
 
   const password = useRef({})
   password.current = watch('password', '')
@@ -88,7 +90,7 @@ export default function SignUpPage() {
 
               if (loginUser.fulfilled.match(resultAction)) {
                 toast(`🦄 You have been logged in!`)
-                push('/')
+                history.replace(from)
               }
             })}
             noValidate
