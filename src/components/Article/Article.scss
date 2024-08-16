@@ -22,7 +22,7 @@
     font-size: 20px;
     line-height: 1.4;
     text-decoration: none;
-    
+
     &:hover {
       text-decoration: underline;
     }
@@ -63,14 +63,13 @@
     border-radius: 2px;
   }
   &__person {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
   }
   &__namedate {
-    display: grid;
-    gap: 4px;
   }
   &__name {
     font-family: 'Inter', sans-serif;
@@ -81,6 +80,7 @@
     font-family: 'Inter', sans-serif;
     font-size: 12px;
     color: var(--text-color-secondary);
+    text-align: right;
   }
   &__avatar {
     display: flex;
@@ -98,6 +98,33 @@
       object-fit: cover;
     }
   }
+  &__btn-box {
+    position: absolute;
+    bottom: 0;
+    transform: translateY(130%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  &__btn-delete {
+    font-family: Inter, sans-serif;
+    padding: 6px 17px;
+    border: 1px solid var(--error-color);
+    border-radius: 5px;
+    color: var(--error-color);
+  }
+  &__btn-edit {
+    font-family: Inter, sans-serif;
+    padding: 6px 17px;
+    border: 1px solid var(--success-color);
+    border-radius: 5px;
+
+    a {
+      outline: none;
+      text-decoration: none;
+      color: var(--success-color);
+    }
+  }
 
   // bottom side
   &__bottom {
@@ -108,6 +135,7 @@
     font-size: 12px;
     line-height: 1.83;
     color: var(--text-color);
+    max-width: 73%;
   }
   &__markdown {
     margin-top: 25px;

@@ -35,7 +35,7 @@ export default function LoggedInHeader() {
         onClick={() => {
           deleteUserFromLocal()
           dispatch(deleteUser())
-          push('/login')
+          push('/')
         }}
         className="button header__log-out"
         type="button"

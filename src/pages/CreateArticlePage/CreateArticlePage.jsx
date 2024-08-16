@@ -138,10 +138,16 @@ export default function CreateArticlePage() {
                 .filter((tag) => tag.length !== 0)
 
               const resultAction = await dispatch(addArticle(dataToAdd))
+              const { slug } = resultAction.payload.article
 
               if (addArticle.fulfilled.match(resultAction)) {
-                toast(`🦄 Your article has been created!`)
-                // push('/')
+                toast(
+                  <>
+                    🦄 Your article has been created! <Link to={`/articles/${slug}`}>Ссылка на статью</Link>
+                  </>
+                )
+                console.log(resultAction)
+                // push(`/articles/${slug}`)
               }
             })}
             noValidate

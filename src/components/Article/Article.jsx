@@ -6,10 +6,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import './Article.scss'
 import { format } from 'date-fns'
 import { Link } from 'react-router-dom/cjs/react-router-dom.min'
 import Markdown from 'markdown-to-jsx'
-import './Article.scss'
+import { useSelector } from 'react-redux'
 import avatar from '../../assets/img/avatar.png'
 
 const shortenString = (strArg = '', strLength = 45) => {
@@ -43,7 +44,10 @@ export default function Article({
   tagList,
   title,
   updatedAt,
+  isSingleArticle,
 }) {
+  const isAuthorized = !!useSelector((state) => state.user.userData.token)
+
   const imageUrl = isValidUrl(author.image) ? author.image : avatar
 
   return (
@@ -60,7 +64,7 @@ export default function Article({
           </div>
           <div className="article__tags">
             {tagList.map((tag, index) => (
-              <div className="article__tag" key={tag + index}>
+              <div className="article__tag" key={shortenString(tag, 20) + index}>
                 {shortenString(tag, 20)}
               </div>
             ))}
@@ -74,11 +78,21 @@ export default function Article({
           <div className="article__avatar">
             <img src={imageUrl} alt="user avatar" />
           </div>
+          {isSingleArticle && isAuthorized && (
+            <div className="article__btn-box">
+              <button className="article__btn-delete button" type="button">
+                Delete
+              </button>
+              <button className="article__btn-edit button" type="button">
+                <Link>Edit</Link>
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <div className="article__bottom">
         <div className="article__excerpt">{shortenString(description, 500)}</div>
-        {body && (
+        {isSingleArticle && (
           <div className="article__markdown">
             <Markdown className="article__markdown">{body}</Markdown>
           </div>

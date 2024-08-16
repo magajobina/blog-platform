@@ -42,6 +42,7 @@ export default function ArticlesPage() {
               title={article.title}
               updatedAt={article.updatedAt}
               key={article.slug + article.createdAt}
+              isSingleArticle={false}
             />
           ))}
 

@@ -23,7 +23,7 @@ const toastErrorParams = {
 }
 
 export default function SignUpPage() {
-  const { push, history } = useHistory() // history для private route
+  const { push, replace } = useHistory() // replace для private route
   const location = useLocation() // для private route
   const { from } = location.state || { from: { pathname: '/' } } // для private route
 
@@ -90,7 +90,7 @@ export default function SignUpPage() {
 
               if (loginUser.fulfilled.match(resultAction)) {
                 toast(`🦄 You have been logged in!`)
-                history.replace(from)
+                replace(from)
               }
             })}
             noValidate

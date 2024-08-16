@@ -27,7 +27,7 @@ export default function SingleArticlePage() {
     <section className="main__articles articles">
       <div className="container">
         {!status && !error && <Spinner />}
-        {error && <ErrorAlert description="Ошибка загрузке этой статьи" />}
+        {error && <ErrorAlert description="Ошибка загрузки этой статьи" />}
         {status && (
           <Article
             author={article.author}
@@ -41,6 +41,7 @@ export default function SingleArticlePage() {
             title={article.title}
             updatedAt={article.updatedAt}
             key={article.slug + article.createdAt}
+            isSingleArticle
           />
         )}
       </div>
