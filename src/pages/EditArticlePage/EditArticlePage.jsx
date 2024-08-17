@@ -9,8 +9,8 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
-import './CreateArticlePage.scss'
-import { Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min'
+import './EditArticlePage.scss'
+import { Link, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useRef, useState } from 'react'
@@ -18,7 +18,8 @@ import classNames from 'classnames'
 import { ToastContainer, toast } from 'react-toastify'
 import { nanoid } from 'nanoid'
 import { clearError } from '../../slices/userSlice'
-import { addArticle } from '../../slices/articleSlice'
+import { updateArticle } from '../../slices/articleSlice'
+import { fetchSingleArticle } from '../../slices/mainSlice'
 
 const toastErrorParams = {
   position: 'top-right',
@@ -31,12 +32,10 @@ const toastErrorParams = {
   theme: 'light',
 }
 
-export default function CreateArticlePage() {
-  const { push } = useHistory()
+export default function EditArticlePage() {
+  const { slug } = useParams()
   const dispatch = useDispatch()
   const { errorCode, errorMessage = 'Problem' } = useSelector((state) => state.article)
-
-  const [tags, setTags] = useState([{ id: nanoid(), value: '' }])
 
   const createTag = (tag, index) => {
     const tagIdString = `tag-${tag.id}`
@@ -47,9 +46,10 @@ export default function CreateArticlePage() {
           type="text"
           name={tagIdString}
           {...register(`tag-${tag.id}`, paramsObj.tag)}
+          defaultValue={tag.value}
           placeholder="Tag"
         />
-        <button className="button create__tag-delete" onClick={() => handleDeleteTag(index)} type="button">
+        <button className="button create__tag-delete" onClick={() => handleDeleteTag(index, tagIdString)} type="button">
           Delete
         </button>
         {index === tags.length - 1 && (
@@ -62,20 +62,47 @@ export default function CreateArticlePage() {
     )
   }
 
-  const handleAddTag = () => {
-    setTags([...tags, { id: nanoid(), value: '' }])
+  // ----------------------------------
+
+  const [tags, setTags] = useState([])
+
+  const handleAddTag = (_, startValue = '') => {
+    setTags((prevState) => {
+      return [...prevState, { id: nanoid(), value: startValue }]
+    })
   }
 
-  const handleDeleteTag = (index) => {
+  useEffect(() => {
+    const func = async () => {
+      const resultAction = await dispatch(fetchSingleArticle(slug))
+      const { title, body, tagList, description } = resultAction.payload.article
+
+      setValue('title', title)
+      setValue('descr', description)
+      setValue('articleText', body)
+
+      tagList.forEach((tagText) => {
+        handleAddTag(null, tagText)
+      })
+    }
+    func()
+  }, [])
+
+  // --------------------------------------
+
+  const handleDeleteTag = (index, fieldName) => {
     if (tags.length > 1) {
       setTags(tags.filter((_, i) => i !== index))
+      unregister(fieldName)
     }
   }
 
   const {
     register,
+    unregister,
     setError,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm()
 
@@ -84,10 +111,8 @@ export default function CreateArticlePage() {
 
     if (errorCode === 422) {
       toast.error(`${errorMessage}, error ${errorCode}`, toastErrorParams)
-      // setError('email', { type: 'focus' }, { shouldFocus: true })
-      // setError('password')
     } else if (errorCode === 401) {
-      toast.error(`${errorMessage}, error ${errorCode}`, toastErrorParams)
+      toast.error(`${errorMessage}, error ${errorCode}. This is probably not your article`, toastErrorParams)
     } else {
       toast.error(`Unknown server error, code ${errorCode}`, toastErrorParams)
     }
@@ -122,28 +147,28 @@ export default function CreateArticlePage() {
       <ToastContainer />
       <div className="container">
         <div className="create__inner">
-          <h2 className="create__title">Create new article</h2>
+          <h2 className="create__title">Edit article</h2>
           <form
             className="create__form"
-            onSubmit={handleSubmit(async (formData) => {
-              const dataToAdd = { ...formData, tags: [] }
+            onSubmit={handleSubmit(async (rawFormData) => {
+              const formData = { ...rawFormData, tags: [] }
 
-              dataToAdd.tags = Object.keys(dataToAdd)
+              formData.tags = Object.keys(formData)
                 .filter((key) => key.includes('tag-')) // Отфильтровываем только те ключи, где значение не пустое
                 .map((key) => {
-                  const tagValue = dataToAdd[key]
-                  delete dataToAdd[key]
+                  const tagValue = formData[key]
+                  delete formData[key]
                   return tagValue.trim()
                 })
                 .filter((tag) => tag.length !== 0)
 
-              const resultAction = await dispatch(addArticle(dataToAdd))
-              const { slug } = resultAction.payload.article
+              const resultAction = await dispatch(updateArticle({ formData, slug }))
 
-              if (addArticle.fulfilled.match(resultAction)) {
+              if (updateArticle.fulfilled.match(resultAction)) {
+                const { slug: newSlug } = resultAction.payload.article
                 toast(
                   <>
-                    🦄 Your article has been created! <Link to={`/articles/${slug}`}>Ссылка на статью</Link>
+                    🦄 Your article has been Updated! <Link to={`/articles/${newSlug}`}>Link</Link> to the Article
                   </>
                 )
                 console.log(resultAction)

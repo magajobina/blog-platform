@@ -11,6 +11,8 @@ import LoginPage from '../../pages/LoginPage'
 import ProfilePage from '../../pages/ProfilePage'
 import CreateArticlePage from '../../pages/CreateArticlePage'
 import PrivateRoute from '../PrivateRoute'
+import EditArticlePage from '../../pages/EditArticlePage'
+import Test from '../Test'
 
 export default function App() {
   return (
@@ -21,7 +23,8 @@ export default function App() {
           <Switch>
             <Route path="/" exact component={ArticlesListPage} />
             <Route path="/articles" exact component={ArticlesListPage} />
-            <Route path="/articles/:slug" component={SingleArticlePage} />
+            <Route path="/articles/:slug" exact component={SingleArticlePage} />
+            <Route path="/articles/:slug/edit" exact component={EditArticlePage} />
             <Route path="/register" component={SignUpPage} />
             <Route path="/login" component={LoginPage} />
             <Route path="/profile" component={ProfilePage} />

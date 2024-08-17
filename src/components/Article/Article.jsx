@@ -8,15 +8,24 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import './Article.scss'
 import { format } from 'date-fns'
-import { Link } from 'react-router-dom/cjs/react-router-dom.min'
+import { Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import Markdown from 'markdown-to-jsx'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { toast, ToastContainer } from 'react-toastify'
 import avatar from '../../assets/img/avatar.png'
+import { deleteArticle } from '../../slices/articleSlice'
+
+const CLOSE_TIME_MILLIS = 3000
 
 const shortenString = (strArg = '', strLength = 45) => {
-  if (strArg.length < strLength) return strArg
+  if (strArg.length <= strLength) return strArg
+
   let result = strArg.substring(0, strLength)
-  result = result.substring(0, result.lastIndexOf(' '))
+
+  const lastSpaceIndex = result.lastIndexOf(' ')
+  if (lastSpaceIndex !== -1 && lastSpaceIndex >= strLength - 10) {
+    result = result.substring(0, lastSpaceIndex)
+  }
 
   return `${result}...`
 }
@@ -46,12 +55,33 @@ export default function Article({
   updatedAt,
   isSingleArticle,
 }) {
+  const { replace } = useHistory()
+  const dispatch = useDispatch()
   const isAuthorized = !!useSelector((state) => state.user.userData.token)
 
   const imageUrl = isValidUrl(author.image) ? author.image : avatar
 
+  const handleDelete = async (e) => {
+    const resultAction = await dispatch(deleteArticle(slug))
+
+    if (deleteArticle.fulfilled.match(resultAction)) {
+      const timeoutId = setTimeout(() => {
+        clearTimeout(timeoutId)
+        replace('/')
+      }, CLOSE_TIME_MILLIS)
+
+      toast(
+        <>
+          🦄 This article has been deleted! <br /> Redirecting to the homepage in 3 sec
+        </>,
+        { autoClose: CLOSE_TIME_MILLIS }
+      )
+    }
+  }
+
   return (
     <article className="article">
+      <ToastContainer />
       <div className="article__top">
         <div className="article__left">
           <div className="article__title-like">
@@ -80,11 +110,11 @@ export default function Article({
           </div>
           {isSingleArticle && isAuthorized && (
             <div className="article__btn-box">
-              <button className="article__btn-delete button" type="button">
+              <button className="article__btn-delete button" onClick={handleDelete} type="button">
                 Delete
               </button>
               <button className="article__btn-edit button" type="button">
-                <Link>Edit</Link>
+                <Link to={`/articles/${slug}/edit`}>Edit</Link>
               </button>
             </div>
           )}

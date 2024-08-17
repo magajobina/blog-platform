@@ -23,7 +23,7 @@ const toastErrorParams = {
 }
 
 export default function SignUpPage() {
-  const { push, replace } = useHistory() // replace для private route
+  const { replace } = useHistory() // replace для private route
   const location = useLocation() // для private route
   const { from } = location.state || { from: { pathname: '/' } } // для private route
 
