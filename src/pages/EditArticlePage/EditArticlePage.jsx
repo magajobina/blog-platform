@@ -20,6 +20,7 @@ import { nanoid } from 'nanoid'
 import { clearError } from '../../slices/userSlice'
 import { updateArticle } from '../../slices/articleSlice'
 import { fetchSingleArticle } from '../../slices/mainSlice'
+import Spinner from '../../components/Spinner'
 
 const toastErrorParams = {
   position: 'top-right',
@@ -36,6 +37,8 @@ export default function EditArticlePage() {
   const { slug } = useParams()
   const dispatch = useDispatch()
   const { errorCode, errorMessage = 'Problem' } = useSelector((state) => state.article)
+  const status = useSelector((state) => state.main.singlePage.status) === 'resolved'
+  const error = useSelector((state) => state.main.singlePage.status) === 'rejected'
 
   const createTag = (tag, index) => {
     const tagIdString = `tag-${tag.id}`
@@ -146,6 +149,7 @@ export default function EditArticlePage() {
     <section className="create main__create">
       <ToastContainer />
       <div className="container">
+        {!status && !error && <Spinner fullscreen />}
         <div className="create__inner">
           <h2 className="create__title">Edit article</h2>
           <form

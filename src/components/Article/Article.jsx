@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-boolean-value */
 /* eslint-disable no-return-assign */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable prefer-const */
@@ -7,15 +8,15 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import './Article.scss'
+import { useState } from 'react'
 import { format } from 'date-fns'
 import { Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import Markdown from 'markdown-to-jsx'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast, ToastContainer } from 'react-toastify'
+import { Popconfirm } from 'antd'
 import avatar from '../../assets/img/avatar.png'
 import { deleteArticle } from '../../slices/articleSlice'
-
-const CLOSE_TIME_MILLIS = 3000
 
 const shortenString = (strArg = '', strLength = 45) => {
   if (strArg.length <= strLength) return strArg
@@ -55,6 +56,7 @@ export default function Article({
   updatedAt,
   isSingleArticle,
 }) {
+  const [popConfirm, showPopconfirm] = useState(false)
   const { replace } = useHistory()
   const dispatch = useDispatch()
   const isAuthorized = !!useSelector((state) => state.user.userData.token)
@@ -64,17 +66,19 @@ export default function Article({
   const handleDelete = async (e) => {
     const resultAction = await dispatch(deleteArticle(slug))
 
-    if (deleteArticle.fulfilled.match(resultAction)) {
-      const timeoutId = setTimeout(() => {
-        clearTimeout(timeoutId)
-        replace('/')
-      }, CLOSE_TIME_MILLIS)
+    showPopconfirm(false)
 
+    if (deleteArticle.fulfilled.match(resultAction)) {
       toast(
         <>
-          🦄 This article has been deleted! <br /> Redirecting to the homepage in 3 sec
+          🦄 This article has been deleted! <br /> Redirecting to the homepage
         </>,
-        { autoClose: CLOSE_TIME_MILLIS }
+        {
+          autoClose: 2500,
+          onClose: () => {
+            replace('/')
+          },
+        }
       )
     }
   }
@@ -110,9 +114,25 @@ export default function Article({
           </div>
           {isSingleArticle && isAuthorized && (
             <div className="article__btn-box">
-              <button className="article__btn-delete button" onClick={handleDelete} type="button">
-                Delete
-              </button>
+              <Popconfirm
+                description="Are you sure to delete this article?"
+                open={popConfirm}
+                placement="rightTop"
+                onConfirm={handleDelete}
+                onCancel={() => {
+                  showPopconfirm(false)
+                }}
+              >
+                <button
+                  className="article__btn-delete button"
+                  onClick={(e) => {
+                    showPopconfirm(true)
+                  }}
+                  type="button"
+                >
+                  Delete
+                </button>
+              </Popconfirm>
               <button className="article__btn-edit button" type="button">
                 <Link to={`/articles/${slug}/edit`}>Edit</Link>
               </button>
