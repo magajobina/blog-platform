@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useState } from 'react'
 import './LikeButton.scss'
 import classNames from 'classnames'
 import { useDispatch } from 'react-redux'
@@ -10,7 +8,7 @@ export default function LikeButton({ favCount, favorited, slug }) {
   const dispatch = useDispatch()
 
   const handleLike = () => {
-    dispatch(faveUnfaveArticle({slug, favorited}))
+    dispatch(faveUnfaveArticle({ slug, favorited }))
   }
 
   return (

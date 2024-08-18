@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/self-closing-comp */
+
 import 'react-toastify/dist/ReactToastify.css'
 import './LoginPage.scss'
 import { Link, useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.min'

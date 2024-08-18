@@ -1,8 +1,4 @@
 /* eslint-disable consistent-return */
-/* eslint-disable default-param-last */
-/* eslint-disable no-use-before-define */
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
@@ -163,8 +159,6 @@ const articleSlice = createSlice({
       .addCase(deleteArticle.rejected, (state, action) => {
         console.log('СТАТЬЯ НЕ УДАЛИЛАСЬ - ', action.payload)
       })
-
-
   },
 })
 

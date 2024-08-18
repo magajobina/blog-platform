@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Link } from 'react-router-dom/cjs/react-router-dom.min'
 import './Header.scss'
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,7 +15,7 @@ export default function Header() {
         <Link
           className="header__sitetitle"
           onClick={() => {
-            console.log(dispatch(resetPaginationPage()))
+            dispatch(resetPaginationPage())
           }}
           to="/articles"
         >

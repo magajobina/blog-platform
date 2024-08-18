@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import './ArticlesListPage.scss'
 import { Pagination } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'

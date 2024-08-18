@@ -1,19 +1,10 @@
-/* eslint-disable consistent-return */
-/* eslint-disable array-callback-return */
-/* eslint-disable no-use-before-define */
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable arrow-body-style */
-/* eslint-disable no-empty */
-/* eslint-disable no-plusplus */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable react/self-closing-comp */
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 import './CreateArticlePage.scss'
-import { Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min'
+import { Link } from 'react-router-dom/cjs/react-router-dom.min'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import { ToastContainer, toast } from 'react-toastify'
 import { nanoid } from 'nanoid'
@@ -32,35 +23,10 @@ const toastErrorParams = {
 }
 
 export default function CreateArticlePage() {
-  const { push } = useHistory()
   const dispatch = useDispatch()
   const { errorCode, errorMessage = 'Problem' } = useSelector((state) => state.article)
 
   const [tags, setTags] = useState([{ id: nanoid(), value: '' }])
-
-  const createTag = (tag, index) => {
-    const tagIdString = `tag-${tag.id}`
-    return (
-      <div key={tag.id} className={classNames('create__tag-box', errors[tagIdString] && 'create__tag-box--invalid')}>
-        <input
-          className="create__input create__tag-input"
-          type="text"
-          name={tagIdString}
-          {...register(`tag-${tag.id}`, paramsObj.tag)}
-          placeholder="Tag"
-        />
-        <button className="button create__tag-delete" onClick={() => handleDeleteTag(index)} type="button">
-          Delete
-        </button>
-        {index === tags.length - 1 && (
-          <button className="button create__tag-add" onClick={handleAddTag} type="button">
-            Add tag
-          </button>
-        )}
-        <span className="create__invalid-message">{errors[tagIdString]?.message}</span>
-      </div>
-    )
-  }
 
   const handleAddTag = () => {
     setTags([...tags, { id: nanoid(), value: '' }])
@@ -74,7 +40,6 @@ export default function CreateArticlePage() {
 
   const {
     register,
-    setError,
     handleSubmit,
     formState: { errors },
   } = useForm()
@@ -84,8 +49,6 @@ export default function CreateArticlePage() {
 
     if (errorCode === 422) {
       toast.error(`${errorMessage}, error ${errorCode}`, toastErrorParams)
-      // setError('email', { type: 'focus' }, { shouldFocus: true })
-      // setError('password')
     } else if (errorCode === 401) {
       toast.error(`${errorMessage}, error ${errorCode}`, toastErrorParams)
     } else {
@@ -115,6 +78,30 @@ export default function CreateArticlePage() {
         message: 'Max length is 50',
       },
     },
+  }
+
+  const createTag = (tag, index) => {
+    const tagIdString = `tag-${tag.id}`
+    return (
+      <div key={tag.id} className={classNames('create__tag-box', errors[tagIdString] && 'create__tag-box--invalid')}>
+        <input
+          className="create__input create__tag-input"
+          type="text"
+          name={tagIdString}
+          {...register(`tag-${tag.id}`, paramsObj.tag)}
+          placeholder="Tag"
+        />
+        <button className="button create__tag-delete" onClick={() => handleDeleteTag(index)} type="button">
+          Delete
+        </button>
+        {index === tags.length - 1 && (
+          <button className="button create__tag-add" onClick={handleAddTag} type="button">
+            Add tag
+          </button>
+        )}
+        <span className="create__invalid-message">{errors[tagIdString]?.message}</span>
+      </div>
+    )
   }
 
   return (

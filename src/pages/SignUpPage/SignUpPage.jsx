@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/self-closing-comp */
+
 import './SignUpPage.scss'
 import { Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { useForm } from 'react-hook-form'

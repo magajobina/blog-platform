@@ -1,6 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/self-closing-comp */
 import './App.scss'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Header from '../Header/Header'
@@ -12,7 +9,6 @@ import ProfilePage from '../../pages/ProfilePage'
 import CreateArticlePage from '../../pages/CreateArticlePage'
 import PrivateRoute from '../PrivateRoute'
 import EditArticlePage from '../../pages/EditArticlePage'
-import Test from '../Test'
 
 export default function App() {
   return (

@@ -1,9 +1,5 @@
-/* eslint-disable consistent-return */
-/* eslint-disable default-param-last */
-/* eslint-disable no-use-before-define */
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
+/* eslint-disable consistent-return */
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 

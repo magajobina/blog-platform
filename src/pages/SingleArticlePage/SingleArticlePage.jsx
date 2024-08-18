@@ -1,7 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable arrow-body-style */
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-expressions */
 import { useParams } from 'react-router-dom/cjs/react-router-dom.min'
 import './SingleArticlePage.scss'
 import { useEffect } from 'react'

@@ -1,14 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/self-closing-comp */
+
 import './ProfilePage.scss'
-import { Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { useRef, useEffect } from 'react'
+import { useEffect } from 'react'
 import classNames from 'classnames'
 import { ToastContainer, toast } from 'react-toastify'
-import { registerUser, clearError, updateUser, getCurrentUser } from '../../slices/userSlice'
+import { clearError, updateUser, getCurrentUser } from '../../slices/userSlice'
 
 const toastErrorParams = {
   position: 'top-right',

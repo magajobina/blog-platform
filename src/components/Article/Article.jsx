@@ -1,12 +1,4 @@
-/* eslint-disable react/jsx-boolean-value */
-/* eslint-disable no-return-assign */
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable prefer-const */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable one-var */
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import './Article.scss'
 import { useState } from 'react'
 import { format } from 'date-fns'
@@ -54,7 +46,6 @@ export default function Article({
   slug,
   tagList,
   title,
-  updatedAt,
   isSingleArticle,
 }) {
   const [popConfirm, showPopconfirm] = useState(false)
@@ -66,7 +57,7 @@ export default function Article({
   const isUserAuthor = currentUserName === articleAuthorUsername
   const imageUrl = isValidUrl(author.image) ? author.image : avatar
 
-  const handleDelete = async (e) => {
+  const handleDelete = async () => {
     const resultAction = await dispatch(deleteArticle(slug))
 
     showPopconfirm(false)
@@ -99,6 +90,7 @@ export default function Article({
           </div>
           <div className="article__tags">
             {tagList.map((tag, index) => (
+              // eslint-disable-next-line react/no-array-index-key
               <div className="article__tag" key={shortenString(tag, 20) + index}>
                 {shortenString(tag, 20)}
               </div>

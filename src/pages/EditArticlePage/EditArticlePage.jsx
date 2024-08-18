@@ -1,20 +1,10 @@
-/* eslint-disable no-const-assign */
-/* eslint-disable consistent-return */
-/* eslint-disable array-callback-return */
-/* eslint-disable no-use-before-define */
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable arrow-body-style */
-/* eslint-disable no-empty */
-/* eslint-disable no-plusplus */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable react/self-closing-comp */
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 import './EditArticlePage.scss'
-import { Link, useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min'
+import { Link, useParams } from 'react-router-dom/cjs/react-router-dom.min'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import { ToastContainer, toast } from 'react-toastify'
 import { nanoid } from 'nanoid'
@@ -40,6 +30,67 @@ export default function EditArticlePage() {
   const { errorCode, errorMessage = 'Problem' } = useSelector((state) => state.article)
   const status = useSelector((state) => state.main.singlePage.status) === 'resolved'
   const error = useSelector((state) => state.main.singlePage.status) === 'rejected'
+  const [tags, setTags] = useState([])
+
+  const {
+    register,
+    unregister,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm()
+
+  const paramsObj = {
+    title: {
+      required: 'This is required',
+    },
+    descr: {
+      required: 'This is required',
+    },
+    articleText: {
+      required: 'This is required',
+    },
+    tag: {
+      minLength: {
+        value: 1,
+        message: 'Min length is 1',
+      },
+      maxLength: {
+        value: 50,
+        message: 'Max length is 50',
+      },
+    },
+  }
+
+  const handleAddTag = (_, startValue = '') => {
+    setTags((prevState) => [...prevState, { id: nanoid(), value: startValue }])
+  }
+
+  useEffect(() => {
+    const func = async () => {
+      const resultAction = await dispatch(fetchSingleArticle(slug))
+
+      const { title, body, description } = resultAction.payload.article
+      let { tagList } = resultAction.payload.article
+
+      if (tagList.length === 0) tagList = ['']
+      setValue('title', title)
+      setValue('descr', description)
+      setValue('articleText', body)
+
+      tagList.forEach((tagText) => {
+        handleAddTag(null, tagText)
+      })
+    }
+    func()
+  }, [])
+
+  const handleDeleteTag = (index, fieldName) => {
+    if (tags.length > 1) {
+      setTags(tags.filter((_, i) => i !== index))
+      unregister(fieldName)
+    }
+  }
 
   const createTag = (tag, index) => {
     const tagIdString = `tag-${tag.id}`
@@ -66,53 +117,6 @@ export default function EditArticlePage() {
     )
   }
 
-  // ----------------------------------
-
-  const [tags, setTags] = useState([])
-
-  const handleAddTag = (_, startValue = '') => {
-    setTags((prevState) => {
-      return [...prevState, { id: nanoid(), value: startValue }]
-    })
-  }
-
-  useEffect(() => {
-    const func = async () => {
-      const resultAction = await dispatch(fetchSingleArticle(slug))
-
-      const { title, body, description } = resultAction.payload.article
-      let { tagList } = resultAction.payload.article
-
-      if (tagList.length === 0) tagList = ['']
-      setValue('title', title)
-      setValue('descr', description)
-      setValue('articleText', body)
-
-      tagList.forEach((tagText) => {
-        handleAddTag(null, tagText)
-      })
-    }
-    func()
-  }, [])
-
-  // --------------------------------------
-
-  const handleDeleteTag = (index, fieldName) => {
-    if (tags.length > 1) {
-      setTags(tags.filter((_, i) => i !== index))
-      unregister(fieldName)
-    }
-  }
-
-  const {
-    register,
-    unregister,
-    setError,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm()
-
   useEffect(() => {
     if (!errorCode) return
 
@@ -126,28 +130,6 @@ export default function EditArticlePage() {
 
     dispatch(clearError())
   }, [errorCode, errorMessage])
-
-  const paramsObj = {
-    title: {
-      required: 'This is required',
-    },
-    descr: {
-      required: 'This is required',
-    },
-    articleText: {
-      required: 'This is required',
-    },
-    tag: {
-      minLength: {
-        value: 1,
-        message: 'Min length is 1',
-      },
-      maxLength: {
-        value: 50,
-        message: 'Max length is 50',
-      },
-    },
-  }
 
   return (
     <section className="create main__create">
