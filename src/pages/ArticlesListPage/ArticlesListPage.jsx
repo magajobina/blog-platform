@@ -17,7 +17,7 @@ export default function ArticlesPage() {
 
   useEffect(() => {
     dispatch(fetchArticles(pageNumber))
-  }, [])
+  }, [pageNumber])
 
   const onPaginationChange = (chosenPageNumber) => {
     dispatch(fetchArticles(chosenPageNumber))
@@ -50,7 +50,7 @@ export default function ArticlesPage() {
           {status && (
             <Pagination
               onChange={onPaginationChange}
-              defaultCurrent={pageNumber}
+              current={pageNumber}
               showSizeChanger={false}
               total={articlesCount}
               pageSize={5}

@@ -1,0 +1,25 @@
+.article {
+  &__like-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 12px;
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background-image: url('../../assets/img/like.svg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      transition: all 0.3s;
+    }
+
+    &--active {
+      &::before {
+        background-image: url('../../assets/img/like-active.svg');
+      }
+    }
+  }
+}

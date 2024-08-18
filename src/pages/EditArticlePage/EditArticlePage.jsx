@@ -1,3 +1,4 @@
+/* eslint-disable no-const-assign */
 /* eslint-disable consistent-return */
 /* eslint-disable array-callback-return */
 /* eslint-disable no-use-before-define */
@@ -78,8 +79,11 @@ export default function EditArticlePage() {
   useEffect(() => {
     const func = async () => {
       const resultAction = await dispatch(fetchSingleArticle(slug))
-      const { title, body, tagList, description } = resultAction.payload.article
 
+      const { title, body, description } = resultAction.payload.article
+      let { tagList } = resultAction.payload.article
+
+      if (tagList.length === 0) tagList = ['']
       setValue('title', title)
       setValue('descr', description)
       setValue('articleText', body)

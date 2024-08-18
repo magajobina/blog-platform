@@ -163,6 +163,8 @@ const articleSlice = createSlice({
       .addCase(deleteArticle.rejected, (state, action) => {
         console.log('СТАТЬЯ НЕ УДАЛИЛАСЬ - ', action.payload)
       })
+
+
   },
 })
 

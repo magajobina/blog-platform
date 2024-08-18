@@ -17,6 +17,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import { Popconfirm } from 'antd'
 import avatar from '../../assets/img/avatar.png'
 import { deleteArticle } from '../../slices/articleSlice'
+import LikeButton from '../LikeButton/LikeButton'
 
 const shortenString = (strArg = '', strLength = 45) => {
   if (strArg.length <= strLength) return strArg
@@ -60,7 +61,9 @@ export default function Article({
   const { replace } = useHistory()
   const dispatch = useDispatch()
   const isAuthorized = !!useSelector((state) => state.user.userData.token)
-
+  const currentUserName = useSelector((state) => state.user.userData.username)
+  const { username: articleAuthorUsername } = author
+  const isUserAuthor = currentUserName === articleAuthorUsername
   const imageUrl = isValidUrl(author.image) ? author.image : avatar
 
   const handleDelete = async (e) => {
@@ -92,9 +95,7 @@ export default function Article({
             <Link className="article__title" to={`/articles/${slug}`}>
               {shortenString(title, 50)}
             </Link>
-            <button className="button article__like-btn" type="button">
-              {favCount}
-            </button>
+            <LikeButton favCount={favCount} favorited={favorited} slug={slug} />
           </div>
           <div className="article__tags">
             {tagList.map((tag, index) => (
@@ -112,7 +113,7 @@ export default function Article({
           <div className="article__avatar">
             <img src={imageUrl} alt="user avatar" />
           </div>
-          {isSingleArticle && isAuthorized && (
+          {isSingleArticle && isAuthorized && isUserAuthor && (
             <div className="article__btn-box">
               <Popconfirm
                 description="Are you sure to delete this article?"
@@ -125,7 +126,7 @@ export default function Article({
               >
                 <button
                   className="article__btn-delete button"
-                  onClick={(e) => {
+                  onClick={() => {
                     showPopconfirm(true)
                   }}
                   type="button"
